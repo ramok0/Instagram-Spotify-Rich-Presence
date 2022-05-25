@@ -31,7 +31,7 @@
 *.out
 *.app
 /config.json
-/x64/Debug
+/x64
 /.vs/Instagram Spotify Rich Presence
 /response.txt
 /enc_temp_folder
