@@ -19,6 +19,9 @@ void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 			//disconnect
 			printf("Should disconnect\n");
 			insta->disconnect(context);
+			curl_global_cleanup();
+			Sleep(15000);
+			exit(0);
 		}
 	}
 }
@@ -31,6 +34,7 @@ int main()
 	InstagramContext context;
 	InstagramAccount account;
 	Spotify spotify;
+	Utils utils;
 	if (insta.login(&context)) {
 		printf("Connected to instagram !\n");
 		printf("Session Id Token : %s\n", context.sessionId.c_str());
@@ -60,15 +64,11 @@ int main()
 							}
 
 							if (biography.find("%play%") != std::string::npos) {
-								std::string emoji = "";
-								if (songInfo.is_playing == true) {
-									emoji = "▶️";
-								}
-								else {
-									emoji = "⏸️";
-								}
-								std::string toWrite = "⬅️%E3%85%A4%E3%85%A4" + emoji + "%E3%85%A4%E3%85%A4➡️";
-								biography = biography.replace(biography.find("%play%"), 6, toWrite);
+								std::string emoji = songInfo.is_playing ? "▶️" : "⏸️";
+								std::string voidChar = "%E3%85%A4";
+								std::stringstream toReplace;
+								toReplace << "⬅️" << utils.repeat(2, voidChar) << emoji << utils.repeat(2, voidChar) << "➡️";
+								biography = biography.replace(biography.find("%play%"), 6, toReplace.str());
 							}
 
 
@@ -94,8 +94,6 @@ int main()
 		}
 		else {
 			printf("Failed to pull account details\n");
-			Sleep(15000);
-			exit(1);
 		}
 	}
 	else {
@@ -103,6 +101,6 @@ int main()
 	}
 
 	Sleep(15000);
-	printf("\n\nEnd of program\n");
-
+	printf("\n\nThe program has encountered an unexcepted error.\n");
+	return 1;
 }
