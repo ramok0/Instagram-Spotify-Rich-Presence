@@ -14,11 +14,11 @@
 
 class Instagram
 {
-
+private : 
+	bool getSharedData(InstagramSharedData* data);
 public:
 	ConfigHelper* config;
 
-	bool getSharedData(InstagramSharedData* data);
 
 	bool login(InstagramContext* context);
 
