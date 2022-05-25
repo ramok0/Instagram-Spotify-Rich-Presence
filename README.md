@@ -1,10 +1,6 @@
-## THIS IS NOT MEANT TO BE USED ON A PERSONNAL ACCOUNT RN, IT MIGHT TRIGGER YOUR ACCOUNT, NEED TESTING
-
-
 # Instagram Spotify Rich Presence
-
 A little program to put what you are listening on spotify in your instagram biography.
-
+This program might get your account rate limited.
 
 ## Screenshots
 
@@ -27,10 +23,10 @@ A little program to put what you are listening on spotify in your instagram biog
 
 ## Config file
 
-- insta_username = your instagram insta_username
-- insta_password = your instagram enc password
-- insta_bio = your instagram biography with format
-- spotify_access_token = your spotify access_token (you can leave blank with just your refresh_token)
-- spotify_refresh_token = your spotify refresh_token
-- spotify_client_id = your spotify's app client id
-- spotify_client_secret = your spotify's app client secret
+- **insta_username** = your instagram insta_username
+- **insta_password** = your instagram enc password
+- **insta_bio** = your instagram biography with format
+- **spotify_access_token** = your spotify access_token (you can leave blank with just your refresh_token)
+- **spotify_refresh_token** = your spotify refresh_token
+- **spotify_client_id** = your spotify's app client id
+- **spotify_client_secret** = your spotify's app client secret
