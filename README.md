@@ -1,1 +1,36 @@
-# THIS IS NOT MEANT TO BE USED ON A PERSONNAL ACCOUNT RN, IT MIGHT TRIGGER YOUR ACCOUNT, NEED TESTING
+## THIS IS NOT MEANT TO BE USED ON A PERSONNAL ACCOUNT RN, IT MIGHT TRIGGER YOUR ACCOUNT, NEED TESTING
+
+
+# Instagram Spotify Rich Presence
+
+A little program to put what you are listening on spotify on your instagram biography.
+
+
+## Screenshots
+
+![It looks like this](https://media.discordapp.net/attachments/971422905328095255/979073568023408690/Untitled.png)
+
+
+## Run Locally
+
+- Download the latest release or build it yourself
+
+- Create a spotify application
+
+- Create a spotify token with your account (with the current-listening scope)
+
+- Put every infos in your config.json
+
+- Start the .exe
+
+- Enjoy
+
+## Config file
+
+- insta_username = your instagram insta_username
+- insta_password = your instagram enc password
+- insta_bio = your instagram biography with format
+- spotify_access_token = your spotify access_token (you can leave blank with just your refresh_token)
+- spotify_refresh_token = your spotify refresh_token
+- spotify_client_id = your spotify's app client id
+- spotify_client_secret = your spotify's app client secret
