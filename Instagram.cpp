@@ -24,10 +24,10 @@ bool Instagram::getSharedData(InstagramSharedData* data)
 
 		curl_easy_cleanup(curl);
 		try {
-			nlohmann::json json = nlohmann::json::parse(readBuffer);
-			if (utils.jsonExists(json, "config")) {
-				if (utils.jsonExists(json["config"], "csrf_token")) {
-					data->csrf_token = std::string(json["config"]["csrf_token"]);
+			nlohmann::json json = nlohmann::json::parse(readBuffer); //parsing the response
+			if (utils.jsonExists(json, "config")) { //if the config object exists
+				if (utils.jsonExists(json["config"], "csrf_token")) { //if the csrf_token property exists in the config object
+					data->csrf_token = std::string(json["config"]["csrf_token"]); 
 				}
 			}
 
@@ -50,7 +50,7 @@ bool Instagram::login(InstagramContext* context)
 {
 	Utils utils;
 	InstagramSharedData data;
-	if (!getSharedData(&data)) {
+	if (!getSharedData(&data)) { //getting csrftoken & deviceId
 		printf("Error while getting shared data\n");
 		return false;
 	}
@@ -70,16 +70,15 @@ bool Instagram::login(InstagramContext* context)
 			std::string csrfTokenHeader = "X-CSRFToken: " + context->csrfToken;
 			headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
 			headers = curl_slist_append(headers, "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36");
-			headers = curl_slist_append(headers, "Accept-Encoding: gzip,deflate");
 			headers = curl_slist_append(headers, "Connection: close");
 			headers = curl_slist_append(headers, csrfTokenHeader.c_str());
 			curl_easy_setopt(curl, CURLOPT_URL, "https://www.instagram.com/accounts/login/ajax/");
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, utils.WriteCallback);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseBuffer);
-			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-			curl_easy_setopt(curl, CURLOPT_POST, 1L);
-			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers); 
+			curl_easy_setopt(curl, CURLOPT_POST, 1L); 
+			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, ""); //enabling cookies
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()); 
 	
 
 			res = curl_easy_perform(curl);
@@ -89,28 +88,26 @@ bool Instagram::login(InstagramContext* context)
 			}
 
 			long http_code = 0;
-			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code); //getting the response code
 			struct curl_slist* cookies = NULL;
-			curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
+			curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies); //getting the cookies
 			if (http_code == 200) {
-					nlohmann::json json = nlohmann::json::parse(responseBuffer);
+					nlohmann::json json = nlohmann::json::parse(responseBuffer); //parsing response
 						if (utils.jsonExists(json, "status")) {
-							if (std::string(json["status"]) == "fail") {
+							if (std::string(json["status"]) == "fail") { //checking if the status is "fail"
 								printf("Status fail :/\n");
 								return false;
-						}
+					     	}
 
-							struct curl_slist* each = cookies;
+							struct curl_slist* each = cookies; //parsing cookies 
 							while (each) {
 									
 								std::string stringed = std::string(each->data);
-								printf("Raw Cookie : %s\n", stringed.c_str());
 								std::vector<std::string> occurences = utils.split(stringed, "\t");
-								printf("Name : %s\n", occurences[5].c_str());
-								if (occurences[5] == "sessionid") {
+								if (occurences[5] == "sessionid") { //getting the sessionid value
 									context->sessionId = occurences[6];
 								}
-								else if (occurences[5] == "ds_user_id") {
+								else if (occurences[5] == "ds_user_id") { //getting the ds_user_id value
 									context->accountId = occurences[6];
 								}
 								
@@ -118,20 +115,21 @@ bool Instagram::login(InstagramContext* context)
 							}
 
 		
-						curl_slist_free_all(headers);
-						curl_easy_cleanup(curl);
+						curl_slist_free_all(headers); //cleanup headers
+						curl_slist_free_all(cookies); //cleanup cookies
+						curl_easy_cleanup(curl); //cleanup curl
 						return true;
 				}
 				else {
 					printf("An error occured while logging in.\n");
-					curl_slist_free_all(headers);
-					curl_slist_free_all(cookies);
-					curl_easy_cleanup(curl);
+					curl_slist_free_all(headers); //cleanup headers
+					curl_slist_free_all(cookies); //cleanup cookies
+					curl_easy_cleanup(curl); //cleanup curl
 					return false;
 				}
 			}
 			else {
-				printf("Status code : %d\n", http_code);
+				printf("Status code : %d\n", http_code); //print the status code in case of errors
 				return false;
 			}
 		}
@@ -147,19 +145,23 @@ bool Instagram::login(InstagramContext* context)
 bool Instagram::disconnect(InstagramContext* context)
 {
 	Utils utils;
-	nlohmann::json body;
+	nlohmann::json body; 
+	//body {user_id: "<userid>", one_tap_app_login: "0"}
 	body["user_id"] = context->accountId;
 	body["one_tap_app_login"] = "0";
+	//post request with body as json without catching the response
 	if (utils.Request("https://www.instagram.com/accounts/logout/ajax/", nullptr, body.dump(), context, false, "application/json")) {
-		context->accountId = "";
+		context->accountId = ""; //remove every properties to the context because they do not exists anymore
 		context->deviceId = "";
 		context->sessionId = "";
 		context->csrfToken = "";
 		printf("Disconnected from Instagram\n");
+		return true;
 	}
 	else {
 		printf("Failed to disconnect properly\n");
 		exit(1);
+		return false; //returning false even if the program is closed 
 	}
 	return false;
 }
@@ -167,10 +169,11 @@ bool Instagram::disconnect(InstagramContext* context)
 bool Instagram::pullInformations(InstagramContext* context, InstagramAccount* account)
 {
 	Utils utils;
-	nlohmann::json response;
+	nlohmann::json response; //to catch the response
+	//get request to the instagram's api
 	if (utils.Request("https://www.instagram.com/accounts/edit/?__a=1&__d=dis", &response, "", context, true)) {
-		if (utils.jsonExists(response, "form_data")) {
-			account->insta_first_name = std::string(response["form_data"]["first_name"]);
+		if (utils.jsonExists(response, "form_data")) { //checking if form data exists in the response
+			account->insta_first_name = std::string(response["form_data"]["first_name"]); 
 			account->insta_email = std::string(response["form_data"]["email"]);
 			account->insta_username = std::string(response["form_data"]["username"]);
 			account->external_url = std::string(response["form_data"]["external_url"]);
@@ -191,9 +194,9 @@ bool Instagram::pullInformations(InstagramContext* context, InstagramAccount* ac
 }
 
 std::string phoneNumberToCorrectPhone(std::string phoneNumber) {
-	if (phoneNumber.size() == 0) return phoneNumber;
-	std::string phone = phoneNumber.replace(phoneNumber.find("+"), 1, "%2B");
-	std::replace(phone.begin(), phone.end(), ' ', '+');
+	if (phoneNumber.size() == 0) return phoneNumber; //if theres no phoneNumber, we're not parsing it #logic
+	std::string phone = phoneNumber.replace(phoneNumber.find("+"), 1, "%2B"); //replace + with %2B
+	std::replace(phone.begin(), phone.end(), ' ', '+'); //replace " " with +
 	return phone;
 }
 
