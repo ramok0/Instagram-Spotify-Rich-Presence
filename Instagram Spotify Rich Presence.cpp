@@ -14,43 +14,55 @@
 
 void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {
-		char ch = _getch();
-		if (ch == 's') {
+		char ch = _getch(); //get key
+		if (ch == 's') { //if the key is s (stop)
 			//disconnect
-			printf("Should disconnect\n");
-			insta->disconnect(context);
-			curl_global_cleanup();
-			Sleep(15000);
-			exit(0);
+		//	printf("Should disconnect\n");
+			insta->disconnect(context); //disconnect to instagram
+			curl_global_cleanup(); //cleanup curl
+			Sleep(15000); //wait 
+			exit(0); //exit
 		}
 	}
 }
 
 int main()
 {
+	//Init curl
 	curl_global_init(CURL_GLOBAL_ALL);
-	ConfigHelper config(CONFIGFILENAME);
-	Instagram insta(&config);
-	InstagramContext context;
-	InstagramAccount account;
-	Spotify spotify;
-	Utils utils;
-	if (insta.login(&context)) {
-		printf("Connected to instagram !\n");
-		printf("Session Id Token : %s\n", context.sessionId.c_str());
-		std::thread cancelThread(cancelThreadFct, &insta, &context);
-		if (insta.pullInformations(&context, &account)) {
-			SpotifySong currentlyPlayed;
-			if (spotify.getCurrentListeningSong(&config, &currentlyPlayed)) {
-				bool firstChange = false;
-				while (1) {
-					bool changedBio = false;
-					config.reload();
-					std::string biography = config.insta_bio;
-					SpotifySong songInfo;
-					if (spotify.getCurrentListeningSong(&config, &songInfo)) {
 
-						if (songInfo.id != currentlyPlayed.id || firstChange == false) {
+	//create ours classes
+	ConfigHelper config(CONFIGFILENAME); //to use config file
+	Instagram insta(&config); //use instagram's api
+	InstagramContext context; //sentive informations like sessionId, accountId, deviceId, csrfToken
+	InstagramAccount account; //account informations (firstname, email, and others stuff)
+	Spotify spotify; //use spotify's api 
+	Utils utils; //some utils functions
+	if (insta.login(&context)) { //login to instagram
+		printf("Connected to instagram !\n");
+#ifdef DEBUG
+		printf("Session Id Token : %s\n", context.sessionId.c_str());
+#endif
+		std::thread cancelThread(cancelThreadFct, &insta, &context); //create a thread to disconnect to instagram
+		if (insta.pullInformations(&context, &account)) { //get account informations
+			SpotifySong currentlyPlayed; //to stock currentlyPlayed spotify song
+			if (spotify.getCurrentListeningSong(&config, &currentlyPlayed)) { //get the current listening song on spotify
+				bool firstChange = false; //bool to see if the bio changed 1 time since the program has started
+				while (1) {
+					bool changedBio = false; //bool to see if the bio changed in the current iteration
+					config.reload(); //reload the config in case smth has changed in it
+					std::string biography = config.insta_bio; //get the biography of the user
+					SpotifySong songInfo; //stock the current played song and compare with currentlyPlayed to see if the song has changed
+					if (spotify.getCurrentListeningSong(&config, &songInfo)) { 
+						if (songInfo.id != currentlyPlayed.id || firstChange == false) { //does the song changed ?
+							/*
+							biography style
+
+							%title% = get the title of the song
+							%artist% = get every artists in the song (feat.)
+							%first_artist% = get first artist in the list of the artists
+							%play% = add an emoji to see if the song is on pause or not
+							*/
 							if (biography.find("%title%") != std::string::npos) {
 								biography = biography.replace(biography.find("%title%"), 7, songInfo.title);
 							}
@@ -72,19 +84,23 @@ int main()
 							}
 
 
-							///	printf("Biography : %s\n", biography.c_str());
+							//printing the new song name if it has changed
 							printf("Now playing : %s\n", songInfo.title.c_str());
-							bool editProfile = insta.editProfile(&context, account, biography);
-							changedBio = true;
-							printf("EditProfile : %s\n", editProfile ? "true" : "false");
-							currentlyPlayed = songInfo;
+							bool editProfile = insta.editProfile(&context, account, biography); //edit the profile with new biography
+							changedBio = true; 
+							printf("EditProfile : %s\n", editProfile ? "true" : "false"); //printing if the profile has been changed
+							currentlyPlayed = songInfo; //changing the currentlyPlayed variable with the new song
 							if (firstChange == false) {
 								firstChange = true;
 							}
 						}
 					}
 
-					int timeout = 1000;
+					/*
+					* timeout = 1000ms for spotify api
+					* 50000ms if the profile has been edited (because of instagram's rate limit)
+					*/
+					int timeout = 1000; 
 					if (changedBio == true) {
 						timeout += 49000;
 					}
