@@ -8,13 +8,7 @@
 
 #include "Config.h"
 
-#include "InstagramContext.h"
-#include "InstagramAccount.h"
 
-struct InstagramSharedData {
-	std::string device_id;
-	std::string csrf_token;
-};
 
 
 

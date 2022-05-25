@@ -3,9 +3,11 @@
 #ifndef __HEADER_GUARD_UTILS_CLASS__
 #define __HEADER_GUARD_UTILS_CLASS__
 #include <iostream>
-#include "nlohmann/json.hpp"
 #include <curl/curl.h>
-#include "InstagramContext.h"
+
+#include "nlohmann/json.hpp"
+#include "framework.h"
+
 class Utils {
 private :    static void hexchar(unsigned char c, unsigned char& hex1, unsigned char& hex2)
 {
