@@ -35,11 +35,11 @@ public:
 		if (!std::filesystem::exists(fileName)) {
 			std::ofstream file(fileName);
 			if (file.is_open()) {
-				file << "Please, complete this file with a correct config; if you need help, read the README.md file.";
+				file << "{}";
 				file.flush();
 			}
 			file.close();
-			printf("Please, complete the config.json file.\n");
+			printf("Please, complete the config.json file with a correct config\nif you need help, read the README.md file.\n");
 			Sleep(15000);
 			exit(0);
 		}
@@ -54,13 +54,13 @@ public:
 		std::ifstream file(fileName);
 		nlohmann::json j;
 		if (file.is_open()) {
-			file >> j;
+			file >> j; //read file
 		}
-		file.close();
+		file.close(); //close the stream as the file has been parsed
 
 		std::vector<std::string> keys = { "spotify_client_id", "spotify_client_secret", "spotify_refresh_token", "spotify_access_token", "insta_username", "insta_password","insta_username", "insta_bio" };
 		for (auto& key : keys) {
-			if (!utils.jsonExists(j, key)) {
+			if (!utils.jsonExists(j, key)) { //check that every keys exists
 				printf("Key %s does not exists!\n", key.c_str());
 				exit(0);
 			}
@@ -80,6 +80,7 @@ public:
 	void save() {
 		std::ofstream file(this->fileName);
 		nlohmann::json j;
+		//file => nlohmann::json => json
 		j["insta_username"] = this->insta_username;
 		j["insta_password"] = this->insta_password;
 		j["insta_bio"] = this->insta_bio;
@@ -91,8 +92,8 @@ public:
 		if (file.is_open()) {
 			file << std::setw(4) << j << std::endl;;
 		}
-		file.flush();
-		file.close();
+		file.flush(); //write
+		file.close(); //close the stream
 	}
 
 	ConfigHelper() {
