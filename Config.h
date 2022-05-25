@@ -4,14 +4,12 @@
 #define __CONFIG_FILE_STRUCT_HEADER__
 
 
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <filesystem>
+#include <fstream> // I/O
+#include <filesystem> // I/O
 
 #include "framework.h"
-#include "nlohmann/json.hpp"
-#include "Utils.h"
+#include "nlohmann/json.hpp" //JSON
+#include "Utils.h" //UTILS FUNCTIONS
 
 
 

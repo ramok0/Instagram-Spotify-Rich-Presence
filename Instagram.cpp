@@ -1,6 +1,4 @@
 #include "Instagram.h"
-#include "Utils.h"
-#include "Spotify.h"
 
 
 

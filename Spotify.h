@@ -2,13 +2,11 @@
 #ifndef __SPOTIFY_INTEGRATION_HEADER__
 #define __SPOTIFY_INTEGRATION_HEADER__
 #include "framework.h"
-#include "curl/curl.h"
-#include "nlohmann/json.hpp"
-#include <iostream>
-
-#include "Config.h"
-#include "Utils.h"
-#include "base64.h"
+#include "curl/curl.h" //curl functions
+#include "nlohmann/json.hpp" //json
+#include "Config.h" //config helper class
+#include "Utils.h" //utils functions
+#include "base64.h" //base 64 -> spotify basic auth
 
 struct SpotifySong {
 	std::string id;

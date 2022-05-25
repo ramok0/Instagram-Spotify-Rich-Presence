@@ -2,7 +2,7 @@
 
 #ifndef __FRAMEWORK_HEADER_HS__
 #define __FRAMEWORK_HEADER_HS__
-#include <string>
+#include <string> // structs
 #define CONFIGFILENAME "config.json"
 
 struct InstagramAccount {

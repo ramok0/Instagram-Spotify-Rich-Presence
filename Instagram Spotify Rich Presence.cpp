@@ -1,15 +1,13 @@
 ﻿#pragma execution_character_set("utf-8")
 
-#include <curl/curl.h>
-#include <thread>
+#include <thread> //thread -> disconnect thread
 
-#include <stdio.h>
-#include <conio.h>
-
-#include "framework.h"
-#include "Config.h"
-#include "Instagram.h"
-#include "Spotify.h"
+#include <conio.h> //getch
+ 
+#include "framework.h" 
+#include "Config.h" //config class
+#include "Instagram.h" //instagram class
+#include "Spotify.h" //spotify class
 
 void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {

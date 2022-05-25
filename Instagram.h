@@ -3,10 +3,9 @@
 #define __INSTAGRAM_CLASS_MAIN__
 
 #include "framework.h"
-#include <iostream>
-#include <string>
-
 #include "Config.h"
+#include "Utils.h"
+#include "Spotify.h"
 
 
 
