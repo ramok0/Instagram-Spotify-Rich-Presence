@@ -20,13 +20,16 @@ struct SpotifySong {
 
 class Spotify
 {
+
+private: 	
+	   bool requestSpotify(std::string url, ConfigHelper* config, nlohmann::json* response);
+
+	   bool generateTokenFromRefresh(ConfigHelper* config);
 public:
 
 	bool getCurrentListeningSong(ConfigHelper* config, SpotifySong* buffer);
 
-	bool requestSpotify(std::string url, ConfigHelper* config, nlohmann::json* response);
 
-	bool generateTokenFromRefresh(ConfigHelper* config);
 };
 
 #endif
