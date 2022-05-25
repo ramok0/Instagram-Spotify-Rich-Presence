@@ -59,12 +59,21 @@ int main()
 							biography style
 
 							%title% = get the title of the song
+							%title-removefeat% = get the title of the song and remove anything after (feat.
 							%artist% = get every artists in the song (feat.)
 							%first_artist% = get first artist in the list of the artists
 							%play% = add an emoji to see if the song is on pause or not
 							*/
 							if (biography.find("%title%") != std::string::npos) {
 								biography = biography.replace(biography.find("%title%"), 7, songInfo.title);
+							}		
+							
+							if (biography.find("%title-removefeat%") != std::string::npos) {
+								std::string title = songInfo.title;
+								if (title.find("(feat.")) {
+									title = title.substr(0, title.find("(feat."));
+								}
+								biography = biography.replace(biography.find("%title-removefeat%"), 18, title);
 							}
 
 							if (biography.find("%artist%") != std::string::npos) {
