@@ -13,10 +13,25 @@ void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {
 		char ch = _getch(); //get key
 		if (ch == 's') { //if the key is s (stop)
-			insta->disconnect(context); //disconnect to instagram
-			curl_global_cleanup(); //cleanup curl
-			printf("You can close the program; it will close in ~50 seconds max.\n");
-			Sleep(3000); //so the user can read the text
+			if (insta->disconnect(context)) //disconnect to instagram
+			{
+
+				curl_global_cleanup(); //cleanup curl
+#ifdef DEBUG
+				printf("The program will exit by itself.\n");
+#else
+				std::cout << termcolor::bright_green << "Disconnect from instagram." << std::endl << "You can close the program; it will close in ~50 seconds max." << std::endl;
+#endif
+				Sleep(3000); //so the user can read the text
+			}
+			else {
+#ifdef DEBUG
+				printf("Failed to disconnect, closing\n");
+				exit(1);
+#else
+				std::cout << termcolor::red << "The program failed to exit, please kill this program with taskmanager." << termcolor::reset << std::endl;
+#endif
+			}
 			break;
 		}
 	}
@@ -34,14 +49,21 @@ int main()
 	InstagramAccount account; //account informations (firstname, email, and others stuff)
 	Spotify spotify; //use spotify's api 
 	Utils utils; //some utils functions
+	std::cout << termcolor::magenta << "Welcome to Instagram Spotify Rich Presence" << std::endl << "Made by Ramok (https://github.com/Ramokprout)" << std::endl << termcolor::reset;
 	if (insta.login(&context)) { //login to instagram
-		printf("Connected to instagram !\n");
+
 #ifdef DEBUG
+		printf("Connected to instagram !\n");
 		printf("Session Id Token : %s\n", context.sessionId.c_str());
+#else 
+		std::cout << termcolor::bright_blue << "Successfully connected to Instagram !" << termcolor::reset << std::endl;
 #endif
 		std::thread cancelThread(cancelThreadFct, &insta, &context); //create a thread to disconnect to instagram
 		cancelThread.detach();
 		if (insta.pullInformations(&context, &account)) { //get account informations
+#ifndef DEBUG
+			std::cout << termcolor::bright_green << "Successfully got your account informations" << termcolor::reset << std::endl;
+#endif
 			SpotifySong currentlyPlayed; //to stock currentlyPlayed spotify song
 			if (spotify.getCurrentListeningSong(&config, &currentlyPlayed)) { //get the current listening song on spotify
 				bool firstChange = false; //bool to see if the bio changed 1 time since the program has started
@@ -62,6 +84,7 @@ int main()
 							%first_artist% = get first artist in the list of the artists
 							%play% = add an emoji to see if the song is on pause or not
 							*/
+
 							if (biography.find("%title%") != std::string::npos) {
 								biography = biography.replace(biography.find("%title%"), 7, songInfo.title);
 							}		
@@ -92,10 +115,23 @@ int main()
 
 
 							//printing the new song name if it has changed
+#ifdef DEBUG
 							printf("Now playing : %s\n", songInfo.title.c_str());
+#else
+							std::cout << termcolor::bright_blue << "Now playing : " << songInfo.title << termcolor::reset << std::endl;
+#endif
 							bool editProfile = insta.editProfile(&context, account, biography); //edit the profile with new biography
 							changedBio = true; 
+#ifdef DEBUG
 							printf("EditProfile : %s\n", editProfile ? "true" : "false"); //printing if the profile has been changed
+#else
+							if (editProfile) {
+								std::cout << termcolor::bright_blue << "Edited profile successfully." << termcolor::reset << std::endl;
+							}
+							else {
+								std::cout << termcolor::bright_red << "Failed to edit profile !" << termcolor::reset << std::endl;
+							}
+#endif
 							currentlyPlayed = songInfo; //changing the currentlyPlayed variable with the new song
 							if (firstChange == false) {
 								firstChange = true;
@@ -118,11 +154,19 @@ int main()
 			}
 		}
 		else {
+#ifdef DEBUG
 			printf("Failed to pull account details\n");
+#else
+			std::cout << termcolor::bright_red << "Failed to get instagram account details !" << termcolor::reset << std::endl;
+#endif
 		}
 	}
 	else {
-		printf("Not connected to instagram\n");
+#ifdef DEBUG
+	printf("Not connected to instagram\n");
+#else
+	std::cout << termcolor::bright_red << "Failed to connect to instagram" << termcolor::reset << std::endl;
+#endif
 	}
 
 	Sleep(15000);

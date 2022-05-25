@@ -2,8 +2,15 @@
 
 #ifndef __FRAMEWORK_HEADER_HS__
 #define __FRAMEWORK_HEADER_HS__
+
+
+
 #include <string> // structs
 #define CONFIGFILENAME "config.json"
+
+#ifndef DEBUG
+#include "termcolor.h"
+#endif
 
 struct InstagramAccount {
 	std::string chaining_enabled;

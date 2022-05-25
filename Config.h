@@ -59,7 +59,11 @@ public:
 		std::vector<std::string> keys = { "spotify_client_id", "spotify_client_secret", "spotify_refresh_token", "spotify_access_token", "insta_username", "insta_password","insta_username", "insta_bio" };
 		for (auto& key : keys) {
 			if (!utils.jsonExists(j, key)) { //check that every keys exists
+#ifdef DEBUG
 				printf("Key %s does not exists!\n", key.c_str());
+#else
+				std::cout << termcolor::bright_red << "Key " << key << " not found in " << this->fileName << ", please check that it exists !" << termcolor::reset << std::endl;
+#endif	
 				exit(0);
 			}
 		}

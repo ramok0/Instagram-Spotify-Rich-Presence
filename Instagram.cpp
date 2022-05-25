@@ -49,7 +49,9 @@ bool Instagram::login(InstagramContext* context)
 	Utils utils;
 	InstagramSharedData data;
 	if (!getSharedData(&data)) { //getting csrftoken & deviceId
+#ifdef DEBUG
 		printf("Error while getting shared data\n");
+#endif
 		return false;
 	}
 	else {
@@ -98,6 +100,11 @@ bool Instagram::login(InstagramContext* context)
 					     	}
 
 							struct curl_slist* each = cookies; //parsing cookies 
+#ifdef DEBUG
+							printf("Parsing cookies...\n");
+#else
+							std::cout << termcolor::bright_green << "Parsing cookies" << termcolor::reset << std::endl;
+#endif
 							while (each) {
 									
 								std::string stringed = std::string(each->data);
@@ -119,7 +126,11 @@ bool Instagram::login(InstagramContext* context)
 						return true;
 				}
 				else {
-					printf("An error occured while logging in.\n");
+#ifdef DEBUG
+							printf("An error occured while logging in.\n");
+#else 
+							std::cout << termcolor::bright_red << "An error occured while logging in." << termcolor::reset << std::endl;
+#endif
 					curl_slist_free_all(headers); //cleanup headers
 					curl_slist_free_all(cookies); //cleanup cookies
 					curl_easy_cleanup(curl); //cleanup curl
@@ -127,12 +138,21 @@ bool Instagram::login(InstagramContext* context)
 				}
 			}
 			else {
-				printf("Status code : %d\n", http_code); //print the status code in case of errors
+				//print the status code in case of errors
+#ifdef DEBUG
+				printf("Status code : %d\n", http_code); 
+#else 
+				std::cout << termcolor::bright_red << "The request ended with status code : " << http_code << std::endl << "Learn more here : " << "https://developer.mozilla.org/fr/docs/Web/HTTP/Status" << termcolor::reset << std::endl;
+#endif
 				return false;
 			}
 		}
 		else {
+#ifdef DEBUG
 			printf("Error while initializating curl !\n");
+#else 
+			std::cout << termcolor::bright_red << "Error while initializating curl !" << termcolor::reset << std::endl;
+#endif
 			return false;
 		}
 
@@ -153,7 +173,6 @@ bool Instagram::disconnect(InstagramContext* context)
 		context->deviceId = "";
 		context->sessionId = "";
 		context->csrfToken = "";
-		printf("Disconnected from Instagram\n");
 		return true;
 	}
 	else {
@@ -177,16 +196,19 @@ bool Instagram::pullInformations(InstagramContext* context, InstagramAccount* ac
 			account->external_url = std::string(response["form_data"]["external_url"]);
 			account->chaining_enabled = "";
 			account->phone_number = std::string(response["form_data"]["phone_number"]);
-			printf("Pulled informations\n");
 			return true;
 		}
 		else {
+#ifdef DEBUG
 			printf("No form data\n");
+#endif
 			return false;
 		}
 	}
 	else {
+#ifdef DEBUG
 		printf("Request failed\n");
+#endif
 		return false;
 	}
 }
