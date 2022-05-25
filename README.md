@@ -13,7 +13,7 @@ A little program to put what you are listening on spotify on your instagram biog
 
 ## Run Locally
 
-- Download the latest release or build it yourself
+- Download the [latest release](https://github.com/Ramokprout/Instagram-Spotify-Rich-Presence/releases/latest) or build it yourself
 
 - Create a spotify application
 
