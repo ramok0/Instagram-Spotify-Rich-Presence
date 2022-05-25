@@ -10,7 +10,6 @@
 #include "Config.h"
 #include "Instagram.h"
 #include "Spotify.h"
-#include "InstagramAccount.h";
 
 void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {
