@@ -49,7 +49,9 @@ int main()
 	InstagramAccount account; //account informations (firstname, email, and others stuff)
 	Spotify spotify; //use spotify's api 
 	Utils utils; //some utils functions
+#ifndef DEBUG
 	std::cout << termcolor::magenta << "Welcome to Instagram Spotify Rich Presence" << std::endl << "Made by Ramok (https://github.com/Ramokprout)" << std::endl << termcolor::reset;
+#endif
 	if (insta.login(&context)) { //login to instagram
 
 #ifdef DEBUG
