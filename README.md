@@ -3,7 +3,7 @@
 
 # Instagram Spotify Rich Presence
 
-A little program to put what you are listening on spotify on your instagram biography.
+A little program to put what you are listening on spotify in your instagram biography.
 
 
 ## Screenshots
