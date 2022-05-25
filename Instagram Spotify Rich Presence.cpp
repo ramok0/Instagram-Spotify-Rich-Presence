@@ -16,12 +16,11 @@ void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {
 		char ch = _getch(); //get key
 		if (ch == 's') { //if the key is s (stop)
-			//disconnect
-		//	printf("Should disconnect\n");
 			insta->disconnect(context); //disconnect to instagram
 			curl_global_cleanup(); //cleanup curl
-			Sleep(15000); //wait 
-			exit(0); //exit
+			printf("You can close the program; it will close in ~50 seconds max.\n");
+			Sleep(3000); //so the user can read the text
+			break;
 		}
 	}
 }
@@ -44,11 +43,13 @@ int main()
 		printf("Session Id Token : %s\n", context.sessionId.c_str());
 #endif
 		std::thread cancelThread(cancelThreadFct, &insta, &context); //create a thread to disconnect to instagram
+		cancelThread.detach();
 		if (insta.pullInformations(&context, &account)) { //get account informations
 			SpotifySong currentlyPlayed; //to stock currentlyPlayed spotify song
 			if (spotify.getCurrentListeningSong(&config, &currentlyPlayed)) { //get the current listening song on spotify
 				bool firstChange = false; //bool to see if the bio changed 1 time since the program has started
 				while (1) {
+					if (context.sessionId.size() == 0) break; //if theres no sessionId, break the loop
 					bool changedBio = false; //bool to see if the bio changed in the current iteration
 					config.reload(); //reload the config in case smth has changed in it
 					std::string biography = config.insta_bio; //get the biography of the user
@@ -106,6 +107,8 @@ int main()
 					}
 					Sleep(timeout);
 				}
+
+				return 0;
 			}
 		}
 		else {
