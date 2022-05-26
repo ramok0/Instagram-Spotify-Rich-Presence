@@ -146,6 +146,16 @@ public :
 		return result;
 	}
 
+	static void fastReplace(std::string* str, std::string searchFor, std::string replaceWith) {
+		if (includes(*str, searchFor)) {
+			*str = str->replace(str->find(searchFor), searchFor.size(), replaceWith);
+		}
+	}
+
+	static bool includes(std::string str, std::string searchFor) {
+		return str.find(searchFor) != std::string::npos;
+	}
+
 };
 
 #endif

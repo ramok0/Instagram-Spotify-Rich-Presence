@@ -23,10 +23,13 @@ This program might get your account rate limited.
 
 ## Config file
 
-- **insta_username** = your instagram insta_username
-- **insta_password** = your instagram enc password
-- **insta_bio** = your instagram biography with format
-- **spotify_access_token** = your spotify access_token (you can leave blank with just your refresh_token)
-- **spotify_refresh_token** = your spotify refresh_token
-- **spotify_client_id** = your spotify's app client id
-- **spotify_client_secret** = your spotify's app client secret
+| Key                    | Description                                          | Key          |
+| :--------              | :-------                                             | :----------  |
+| `insta_username`       | your instagram insta_username                        | **String**   |
+| `insta_password`       | your instagram enc password                          | **String**   |
+| `insta_bio`            | your instagram biography with format                 | **String**   |
+| `spotify_access_token` | your spotify access_token                            | **String**   |
+| `spotify_refresh_token`| your spotify refresh_token                           | **String**   |
+| `spotify_client_id`    | your spotify's app client id                         | **String**   |
+| `spotify_client_secret`| your spotify's app client secret                     | **String**   |
+| `noColors`             | Remove the "A COLORS SHOW" in the title of the song  | **Boolean**  |

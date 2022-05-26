@@ -25,6 +25,7 @@ public:
 	std::string insta_username;
 	std::string insta_password;
 	std::string insta_bio;
+	bool noColors;
 
 
 
@@ -61,7 +62,7 @@ public:
 		}
 		file.close(); //close the stream as the file has been parsed
 
-		std::vector<std::string> keys = { "spotify_client_id", "spotify_client_secret", "spotify_refresh_token", "spotify_access_token", "insta_username", "insta_password","insta_username", "insta_bio" };
+		std::vector<std::string> keys = { "spotify_client_id", "spotify_client_secret", "spotify_refresh_token", "spotify_access_token", "insta_username", "insta_password","insta_username", "insta_bio", "noColors" };
 		for (auto& key : keys) {
 			if (!utils.jsonExists(j, key)) { //check that every keys exists
 #ifdef DEBUG
@@ -82,6 +83,9 @@ public:
 		this->insta_username = std::string(j["insta_username"]);
 		this->insta_password = std::string(j["insta_password"]);
 		this->insta_bio = std::string(j["insta_bio"]);
+
+		//OPTIONS
+		this->noColors = j["noColors"].get<bool>();
 	}
 
 	void save() {
@@ -95,6 +99,7 @@ public:
 		j["spotify_refresh_token"] = this->spotify_refresh_token;
 		j["spotify_client_id"] = this->spotify_client_id;
 		j["spotify_client_secret"] = this->spotify_client_secret;
+		j["noColors"] = this->noColors;
 
 		if (file.is_open()) {
 			file << std::setw(4) << j << std::endl;;
