@@ -38,7 +38,12 @@ public:
 			}
 			file.close();
 			printf("Please, complete the config.json file with a correct config\nif you need help, read the README.md file.\n");
+#ifdef WINDOWS_SYS
 			Sleep(15000);
+#elif POSIX_SYS
+			sleep(15);
+#endif
+	
 			exit(0);
 		}
 		else {

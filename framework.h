@@ -12,6 +12,14 @@
 #include "termcolor.h"
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#   define WINDOWS_SYS
+#include <Windows.h>
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#   define POSIX_SYS
+#include <unistd.h>
+#endif
+
 struct InstagramAccount {
 	std::string chaining_enabled;
 	std::string external_url;

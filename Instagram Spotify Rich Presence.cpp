@@ -3,11 +3,13 @@
 #include <thread> //thread -> disconnect thread
 
 #include <conio.h> //getch
- 
+
 #include "framework.h" 
 #include "Config.h" //config class
 #include "Instagram.h" //instagram class
 #include "Spotify.h" //spotify class
+
+
 
 void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {
@@ -22,7 +24,11 @@ void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 #else
 				std::cout << termcolor::bright_green << "Disconnect from instagram." << std::endl << "You can close the program; it will close in ~50 seconds max." << std::endl;
 #endif
-				Sleep(3000); //so the user can read the text
+#ifdef WINDOWS_SYS
+				Sleep(3000);
+#elif POSIX_SYS
+				sleep(3);
+#endif //so the user can read the text
 			}
 			else {
 #ifdef DEBUG
@@ -153,7 +159,11 @@ int main()
 					if (changedBio == true) {
 						timeout += 49000;
 					}
+#ifdef WINDOWS_SYS
 					Sleep(timeout);
+#elif POSIX_SYS
+					sleep(timeout / 1000);
+#endif
 				}
 
 				return 0;
@@ -175,7 +185,11 @@ int main()
 #endif
 	}
 
+#ifdef WINDOWS_SYS
 	Sleep(15000);
+#elif POSIX_SYS
+	sleep(15);
+#endif
 	printf("\n\nThe program has encountered an unexcepted error.\n");
 	return 1;
 }
