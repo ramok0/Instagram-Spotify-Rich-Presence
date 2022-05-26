@@ -46,14 +46,14 @@ int main()
 	ConfigHelper config(CONFIGFILENAME); //to use config file
 	Instagram insta(&config); //use instagram's api
 	InstagramContext context; //sentive informations like sessionId, accountId, deviceId, csrfToken
+	context.shouldDisconnect = false;
 	InstagramAccount account; //account informations (firstname, email, and others stuff)
 	Spotify spotify; //use spotify's api 
 	Utils utils; //some utils functions
 #ifndef DEBUG
-	std::cout << termcolor::magenta << "Welcome to Instagram Spotify Rich Presence" << std::endl << "Made by Ramok (https://github.com/Ramokprout)" << std::endl << termcolor::reset;
+	std::cout << termcolor::bright_green << "Welcome to Instagram Spotify Rich Presence" << std::endl << "Made by Ramok (https://github.com/Ramokprout)" << std::endl << termcolor::reset;
 #endif
 	if (insta.login(&context)) { //login to instagram
-
 #ifdef DEBUG
 		printf("Connected to instagram !\n");
 		printf("Session Id Token : %s\n", context.sessionId.c_str());
@@ -70,7 +70,7 @@ int main()
 			if (spotify.getCurrentListeningSong(&config, &currentlyPlayed)) { //get the current listening song on spotify
 				bool firstChange = false; //bool to see if the bio changed 1 time since the program has started
 				while (1) {
-					if (context.sessionId.size() == 0) break; //if theres no sessionId, break the loop
+					if (context.shouldDisconnect == true) break; //if theres no sessionId, break the loop
 					bool changedBio = false; //bool to see if the bio changed in the current iteration
 					config.reload(); //reload the config in case smth has changed in it
 					std::string biography = config.insta_bio; //get the biography of the user
@@ -128,7 +128,7 @@ int main()
 							printf("EditProfile : %s\n", editProfile ? "true" : "false"); //printing if the profile has been changed
 #else
 							if (editProfile) {
-								std::cout << termcolor::bright_blue << "Edited profile successfully." << termcolor::reset << std::endl;
+								std::cout << termcolor::bright_green << "Edited profile successfully." << termcolor::reset << std::endl;
 							}
 							else {
 								std::cout << termcolor::bright_red << "Failed to edit profile !" << termcolor::reset << std::endl;

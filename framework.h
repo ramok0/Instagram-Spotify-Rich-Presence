@@ -26,6 +26,7 @@ struct InstagramContext {
 	std::string sessionId;
 	std::string csrfToken;
 	std::string deviceId;
+	bool shouldDisconnect;
 };
 
 struct InstagramSharedData {

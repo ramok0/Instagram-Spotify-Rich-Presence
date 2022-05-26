@@ -173,6 +173,7 @@ bool Instagram::disconnect(InstagramContext* context)
 		context->deviceId = "";
 		context->sessionId = "";
 		context->csrfToken = "";
+		context->shouldDisconnect = true;
 		return true;
 	}
 	else {
