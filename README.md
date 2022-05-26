@@ -2,15 +2,15 @@
 A little program to put what you are listening on spotify in your instagram biography.
 This program might get your account rate limited.
 
-## Screenshots
+## 📸 Screenshots
 
 ![It looks like this](https://media.discordapp.net/attachments/971422905328095255/979073568023408690/Untitled.png)
 
-## Performances
+## ⚡ Performances
 
 This program is well optimized so you can leave it in the background; it will not eat more than 5mo of ram and 1% of CPU
 
-## Run Locally
+## 💻 Run Locally
 
 - Download the [latest release](https://github.com/Ramokprout/Instagram-Spotify-Rich-Presence/releases/latest) or build it yourself
 
@@ -24,7 +24,7 @@ This program is well optimized so you can leave it in the background; it will no
 
 - Enjoy
 
-## Config file
+## 🔧 Config file
 
 | Key                    | Description                                          | Key          |
 | :--------              | :-------                                             | :----------  |
