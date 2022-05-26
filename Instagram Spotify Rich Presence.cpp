@@ -74,9 +74,9 @@ int main()
 					bool changedBio = false; //bool to see if the bio changed in the current iteration
 					config.reload(); //reload the config in case smth has changed in it
 					std::string biography = config.insta_bio; //get the biography of the user
-					SpotifySong songInfo; //stock the current played song and compare with currentlyPlayed to see if the song has changed
-					if (spotify.getCurrentListeningSong(&config, &songInfo)) { 
-						if (songInfo.id != currentlyPlayed.id || firstChange == false) { //does the song changed ?
+					SpotifySong *songInfo = new SpotifySong(); //stock the current played song and compare with currentlyPlayed to see if the song has changed
+					if (spotify.getCurrentListeningSong(&config, songInfo)) { 
+						if (songInfo->id != currentlyPlayed.id || firstChange == false) { //does the song changed ?
 							/*
 							biography style
 
@@ -88,11 +88,11 @@ int main()
 							*/
 
 							if (biography.find("%title%") != std::string::npos) {
-								biography = biography.replace(biography.find("%title%"), 7, songInfo.title);
+								biography = biography.replace(biography.find("%title%"), 7, songInfo->title);
 							}		
 							
 							if (biography.find("%title-removefeat%") != std::string::npos) {
-								std::string title = songInfo.title;
+								std::string title = songInfo->title;
 								if (title.find("(feat.")) {
 									title = title.substr(0, title.find("(feat."));
 								}
@@ -100,15 +100,15 @@ int main()
 							}
 
 							if (biography.find("%artist%") != std::string::npos) {
-								biography = biography.replace(biography.find("%artist%"), 8, songInfo.artists);
+								biography = biography.replace(biography.find("%artist%"), 8, songInfo->artists);
 							}
 
 							if (biography.find("%first_artist%") != std::string::npos) {
-								biography = biography.replace(biography.find("%first_artist%"), 14, songInfo.first_artist);
+								biography = biography.replace(biography.find("%first_artist%"), 14, songInfo->first_artist);
 							}
 
 							if (biography.find("%play%") != std::string::npos) {
-								std::string emoji = songInfo.is_playing ? "▶️" : "⏸️";
+								std::string emoji = songInfo->is_playing ? "▶️" : "⏸️";
 								std::string voidChar = "%E3%85%A4";
 								std::stringstream toReplace;
 								toReplace << "⬅️" << utils.repeat(2, voidChar) << emoji << utils.repeat(2, voidChar) << "➡️";
@@ -120,7 +120,7 @@ int main()
 #ifdef DEBUG
 							printf("Now playing : %s\n", songInfo.title.c_str());
 #else
-							std::cout << termcolor::bright_blue << "Now playing : " << songInfo.title << termcolor::reset << std::endl;
+							std::cout << termcolor::bright_blue << "Now playing : " << songInfo->title << termcolor::reset << std::endl;
 #endif
 							bool editProfile = insta.editProfile(&context, account, biography); //edit the profile with new biography
 							changedBio = true; 
@@ -134,11 +134,15 @@ int main()
 								std::cout << termcolor::bright_red << "Failed to edit profile !" << termcolor::reset << std::endl;
 							}
 #endif
-							currentlyPlayed = songInfo; //changing the currentlyPlayed variable with the new song
+							currentlyPlayed = *songInfo; //changing the currentlyPlayed variable with the new song
+							delete songInfo;
 							if (firstChange == false) {
 								firstChange = true;
 							}
 						}
+					}
+					else {
+						delete songInfo;
 					}
 
 					/*
