@@ -6,6 +6,9 @@ This program might get your account rate limited.
 
 ![It looks like this](https://media.discordapp.net/attachments/971422905328095255/979073568023408690/Untitled.png)
 
+## Performances
+
+This program is well optimized so you can leave it in the background; it will not eat more than 5mo of ram and 1% of CPU
 
 ## Run Locally
 
