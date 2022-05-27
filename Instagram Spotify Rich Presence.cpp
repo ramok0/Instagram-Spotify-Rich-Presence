@@ -43,6 +43,9 @@ void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	}
 }
 
+int mai2n();
+
+
 int main()
 {
 	//Init curl
@@ -73,102 +76,105 @@ int main()
 			std::cout << termcolor::bright_green << "Successfully got your account informations" << termcolor::reset << std::endl;
 #endif
 			SpotifySong currentlyPlayed; //to stock currentlyPlayed spotify song
-			if (spotify.getCurrentListeningSong(&config, &currentlyPlayed)) { //get the current listening song on spotify
-				bool firstChange = false; //bool to see if the bio changed 1 time since the program has started
 				while (1) {
-					if (context.shouldDisconnect == true) break; //if theres no sessionId, break the loop
-					bool changedBio = false; //bool to see if the bio changed in the current iteration
-					config.reload(); //reload the config in case smth has changed in it
-					std::string biography = config.insta_bio; //get the biography of the user
-					SpotifySong songInfo; //stock the current played song and compare with currentlyPlayed to see if the song has changed
-					if (spotify.getCurrentListeningSong(&config, &songInfo)) { 
-						if (songInfo.id != currentlyPlayed.id || firstChange == false) { //does the song changed ?
-							/*
-							biography style
+					try {
+						if (context.shouldDisconnect == true) break; //if theres no sessionId, break the loop
+						bool changedBio = false; //bool to see if the bio changed in the current iteration
+						config.reload(); //reload the config in case smth has changed in it
+						std::string biography = config.insta_bio; //get the biography of the user
+						SpotifySong songInfo; //stock the current played song and compare with currentlyPlayed to see if the song has changed
+						if (spotify.getCurrentListeningSong(&config, &songInfo)) {
+							if (songInfo.id != currentlyPlayed.id) { //the song changed ?
+								/*
+								biography style
 
-							%title% = get the title of the song
-							%title-removefeat% = get the title of the song and remove anything after (feat.
-							%artist% = get every artists in the song (feat.)
-							%first_artist% = get first artist in the list of the artists
-							%play% = add an emoji to see if the song is on pause or not
-							*/
+								%title% = get the title of the song
+								%title-removefeat% = get the title of the song and remove anything after (feat.
+								%artist% = get every artists in the song (feat.)
+								%first_artist% = get first artist in the list of the artists
+								%play% = add an emoji to see if the song is on pause or not
+								*/
 
-							if (config.noColors && utils.includes(songInfo.title, "A COLORS SHOW")) {
-								utils.fastReplace(&songInfo.title, " - A COLORS SHOW", "");
-							}
-
-							utils.fastReplace(&biography, "%title%", songInfo.title);
-							
-
-							if (utils.includes(biography, "%title-removefeat%")) {
-								std::string title = songInfo.title;
-								size_t featIndex = title.find("(feat."); //get pos of (feat.
-								if (featIndex) {
-									title = title.substr(0, featIndex);
+								if (config.noColors && utils.includes(songInfo.title, "A COLORS SHOW")) {
+									utils.fastReplace(&songInfo.title, " - A COLORS SHOW", "");
 								}
-								utils.fastReplace(&biography, "%title-removefeat%", title); //replace %title-removefeat% with the title without feat
-							}
+
+								utils.fastReplace(&biography, "%title%", songInfo.title);
+
+
+								if (utils.includes(biography, "%title-removefeat%")) {
+									std::string title = songInfo.title;
+									size_t featIndex = title.find("(feat."); //get pos of (feat.
+									if (featIndex) {
+										title = title.substr(0, featIndex);
+									}
+									utils.fastReplace(&biography, "%title-removefeat%", title); //replace %title-removefeat% with the title without feat
+								}
 
 
 
-							utils.fastReplace(&biography, "%artist%", songInfo.artists); //replace %artist% by the actual artists
-							utils.fastReplace(&biography, "%first_artist%", songInfo.first_artist); //replace %first_artist% with the artist
-
-							
-
-							if(utils.includes(biography, "%play%")) { //here i use includes because we are defining some vars 
-								std::string emoji = songInfo.is_playing ? "▶️" : "⏸️"; 
-								std::string voidChar = "%E3%85%A4";
-								std::stringstream toReplace;
-								toReplace << "⬅️" << utils.repeat(2, voidChar) << emoji << utils.repeat(2, voidChar) << "➡️";
-								utils.fastReplace(&biography, "%play%", toReplace.str()); //replace %play% with our playbar
-							}
+								utils.fastReplace(&biography, "%artist%", songInfo.artists); //replace %artist% by the actual artists
+								utils.fastReplace(&biography, "%first_artist%", songInfo.first_artist); //replace %first_artist% with the artist
 
 
-							//printing the new song name if it has changed
+
+								if (utils.includes(biography, "%play%")) { //here i use includes because we are defining some vars 
+									std::string emoji = songInfo.is_playing ? "▶️" : "⏸️";
+									std::string voidChar = "%E3%85%A4";
+									std::stringstream toReplace;
+									toReplace << "⬅️" << utils.repeat(2, voidChar) << emoji << utils.repeat(2, voidChar) << "➡️";
+									utils.fastReplace(&biography, "%play%", toReplace.str()); //replace %play% with our playbar
+								}
+
+
+								//printing the new song name if it has changed
 #ifdef DEBUG
-							printf("Now playing : %s\n", songInfo.title.c_str());
+								printf("Now playing : %s\n", songInfo.title.c_str());
 #else
-							std::cout << termcolor::bright_blue << "Now playing : " << songInfo.title << termcolor::reset << std::endl;
+								std::cout << termcolor::bright_blue << "Now playing : " << songInfo.title << termcolor::reset << std::endl;
 #endif
-							bool editProfile = insta.editProfile(&context, account, biography); //edit the profile with new biography
-							changedBio = true; 
+								bool editProfile = insta.editProfile(&context, account, biography); //edit the profile with new biography
+								changedBio = true;
 #ifdef DEBUG
-							printf("EditProfile : %s\n", editProfile ? "true" : "false"); //printing if the profile has been changed
+								printf("EditProfile : %s\n", editProfile ? "true" : "false"); //printing if the profile has been changed
 #else
-							if (editProfile) {
-								std::cout << termcolor::bright_green << "Edited profile successfully." << termcolor::reset << std::endl;
-							}
-							else {
-								std::cout << termcolor::bright_red << "Failed to edit profile !" << termcolor::reset << std::endl;
-							}
+								if (editProfile) {
+									std::cout << termcolor::bright_green << "Edited profile successfully." << termcolor::reset << std::endl;
+								}
+								else {
+									std::cout << termcolor::bright_red << "Failed to edit profile !" << termcolor::reset << std::endl;
+								}
 #endif
-							currentlyPlayed = songInfo; //changing the currentlyPlayed variable with the new song
-				
-							if (firstChange == false) {
-								firstChange = true;
+								currentlyPlayed = songInfo; //changing the currentlyPlayed variable with the new song
 							}
 						}
-					}
 
 
-					/*
-					* timeout = 1000ms for spotify api
-					* 50000ms if the profile has been edited (because of instagram's rate limit)
-					*/
-					int timeout = 1000; 
-					if (changedBio == true) {
-						timeout += 49000;
-					}
+						/*
+						* timeout = 1000ms for spotify api
+						* 50000ms if the profile has been edited (because of instagram's rate limit)
+						*/
+						int timeout = 1000;
+						if (changedBio == true) {
+							timeout += 49000;
+						}
 #ifdef WINDOWS_SYS
-					Sleep(timeout);
+						Sleep(timeout);
 #elif POSIX_SYS
-					sleep(timeout / 1000);
+						sleep(timeout / 1000);
 #endif
+					}
+					catch (...) {
+#ifdef WINDOWS_SYS
+						Sleep(15000);
+#elif POSIX_SYS
+						sleep(15);
+#endif
+					}
 				}
 				printf("loop has been broken\n");
 				return 1;
-			}
+			
 		}
 		else {
 #ifdef DEBUG

@@ -8,6 +8,8 @@
 #include <string> // structs
 #define CONFIGFILENAME "config.json"
 
+
+
 #ifndef DEBUG
 #include "termcolor.h"
 #endif
