@@ -22,6 +22,7 @@
 #include <unistd.h>
 #endif
 
+
 struct InstagramAccount {
 	std::string chaining_enabled;
 	std::string external_url;

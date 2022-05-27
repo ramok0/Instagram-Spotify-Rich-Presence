@@ -11,6 +11,7 @@
 
 
 
+
 void cancelThreadFct(Instagram* insta, InstagramContext* context) {
 	while (1) {
 		char ch = _getch(); //get key
@@ -59,13 +60,16 @@ int main()
 	InstagramAccount account; //account informations (firstname, email, and others stuff)
 	Spotify spotify; //use spotify's api 
 	Utils utils; //some utils functions
+
+	const char* version = "1.1.0";
 #ifndef DEBUG
-	std::cout << termcolor::bright_green << "Welcome to Instagram Spotify Rich Presence" << std::endl << "Made by Ramok (https://github.com/Ramokprout)" << std::endl << termcolor::reset;
+	std::cout << termcolor::bright_green << "Welcome to Instagram Spotify Rich Presence" << std::endl << "Made by Ramok (https://github.com/Ramokprout)" << std::endl << "Version : " << version << std::endl << termcolor::reset;
 #endif
 	if (insta.login(&context)) { //login to instagram
 #ifdef DEBUG
 		printf("Connected to instagram !\n");
 		printf("Session Id Token : %s\n", context.sessionId.c_str());
+		printf("Version : %s\n", version);
 #else 
 		std::cout << termcolor::bright_blue << "Successfully connected to Instagram !" << termcolor::reset << std::endl;
 #endif
